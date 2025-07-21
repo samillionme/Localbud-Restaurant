@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Localbud Restaurant</title>
+    <script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 2em;
+        }
+        .marquee {
+            background-color: #ddd;
+            padding: 10px;
+            overflow: hidden;
+        }
+        .marquee a {
+            margin: 0 20px;
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+        }
+        .marquee a img {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+            border-radius: 5px;
+        }
+        .marquee a:hover {
+            color: #007bff;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .section h2 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .dish, .chef {
+            background-color: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1em;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Localbud Restaurant</h1>
+        <p>Experience the Taste of the World</p>
+    </header>
+
+    <div class="marquee">
+        <marquee behavior="scroll" direction="left">
+            <a href="chinese.html"><img src="chinese category/sweet-sour-spork2.jpg" alt="Chinese Cuisine">Chinese</a>
+            <a href="igbo.html"><img src="https://lowcarbafrica.com/wp-content/uploads/2018/06/Egusi-Soup-IG-1-1024x1024.webp" alt="Igbo Cuisine">Igbo</a>
+            <a href="yoruba.html"><img src="https://d2uqlwridla7kt.cloudfront.net/recipe-media/recipe-8ljqum2xv/h7w0y8ljqumyq0/amala-recipe-jpg" alt="Yoruba Cuisine">Yoruba</a>
+            <a href="european.html"><img src="https://www.recipetineats.com/tachyon/2021/02/Beef-Bourguignon_9.jpg?resize=900%2C1260&zoom=0.72"" alt="European Cuisine">European</a>
+            <a href="hausa.html"><img src="https://www.tasteofhome.com/wp-content/uploads/2025/07/Suya_TOHVS20_89779_BL_10_12_4.jpg?fit=700%2C1024" alt="Hausa Cuisine">Hausa</a>
+        </marquee>
+    </div>
+
+    <div class="container">
+        <div class="section">
+            <h2>Welcome to Localbud</h2>
+            <p>Discover a world of flavors at Localbud Restaurant. Our menu features authentic dishes from Chinese, Igbo, Yoruba, European, and Hausa cuisines, crafted by expert chefs. Explore our categories above to dive into each culinary experience.</p>
+        </div>
+
+        <div class="section">
+            <h2>About Us</h2>
+            <p>At Localbud Restaurant, we are passionate about bringing global cuisines to your table. Founded in 2020, our mission is to celebrate culinary diversity by offering authentic dishes prepared with fresh ingredients and traditional techniques. Our team of skilled chefs from around the world ensures every bite is a journey of taste and culture.</p>
+        </div>
+
+        <div class="section">
+            <a href="contact us.html">
+            <h2>Contact Us</h2>
+            </a>
+           
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 Localbud Restaurant. All rights reserved.</p>
+    </footer>
+</body>
+</html>
